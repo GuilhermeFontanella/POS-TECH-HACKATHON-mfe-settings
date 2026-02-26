@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import Settings from "./Settings/Settings";
 
 class SettingsMFE extends HTMLElement {
     private root: ReactDOM.Root | null = null;
@@ -14,7 +15,7 @@ class SettingsMFE extends HTMLElement {
         }
         this.root.render(
             <React.StrictMode>
-                <App />
+                <Settings />
             </React.StrictMode>
         );
     }

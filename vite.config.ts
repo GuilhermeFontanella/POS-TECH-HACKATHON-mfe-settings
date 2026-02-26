@@ -1,12 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import federation from '@originjs/vite-plugin-federation';
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
   base: 'http://localhost:4173/',
   plugins: [
     react(),
+    vanillaExtractPlugin(),
     federation({
       name: 'mfe-settings',
       filename: 'remoteEntry.js',
