@@ -1,6 +1,6 @@
 import { InputNumber, Radio, Select, Space, Switch, type RadioChangeEvent, type SelectProps } from "antd";
 import { useState } from "react";
-import { Grid } from 'antd';
+//import { Grid } from 'antd';
 
 const options: SelectProps['options'] = [];
 
@@ -14,12 +14,6 @@ interface OptionsProps {
     },
     onChangeValue?: (value: number | { value: number; checked: boolean }) => void;
 }
-
-const value = [
-      { value: 1, label: 'A' },
-      { value: 2, label: 'B' },
-      { value: 3, label: 'C' },
-    ]
 
 for (let i = 10; i < 36; i++) {
   options.push({
