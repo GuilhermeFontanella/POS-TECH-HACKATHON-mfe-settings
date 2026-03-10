@@ -130,10 +130,6 @@ const Options = ({ optionType, data, onChangeValue, defaultValue }: OptionsProps
         }
     };
 
-    useEffect(() => {
-        console.log(preferences)
-    }, [preferences])
-
     return (
         <div style={setStyle()}>
             {handleOptionType()}
