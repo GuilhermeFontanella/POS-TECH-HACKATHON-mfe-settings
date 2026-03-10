@@ -2,11 +2,24 @@ import { Collapse, type CollapseProps } from 'antd';
 import * as styles from './SettingsList.css';
 import Options from './options/Options';
 import { useUpdateSettings } from '../../hooks/useUpdateSettings';
+import { useDispatch } from 'react-redux';
+import { updateSetting } from '../../store/settingsSlice';
+import { usePreferences } from '../../hooks/usePreferences';
 
 const radioOptions = {
   field: 'complexityLevel',
   title: 'Nível de complexidade da interface',
   subtitle: 'Escolha o nível de complexidade da interface',
+  fullText: `
+  Ao selecionar o nível de complexidade da interface, 
+  você define quanto detalhamento e quantas opções estarão visíveis durante o uso da aplicação. 
+  Um nível mais simples apresenta apenas os elementos essenciais, tornando a navegação 
+  mais rápida e intuitiva, ideal para quem prefere uma experiência limpa e direta. 
+  Já níveis mais avançados exibem controles adicionais, informações complementares e funcionalidades extras, 
+  proporcionando maior flexibilidade e personalização para usuários que precisam de controle total sobre 
+  cada detalhe. Ajustar esse parâmetro permite equilibrar eficiência e profundidade, adaptando a interface 
+  ao seu estilo de uso e à sua familiaridade com as ferramentas disponíveis.
+  `,
   options: [
     { value: 1, label: 'Básico', complementaryText: 'Mostra somente as informações mais importantes. Ideal para quem prefere uma tela mais simples, com menos elementos e menos distrações.' },
     { value: 2, label: 'Comum', complementaryText: 'Mostra as informações essenciais para o uso diário do sistema. É um equilíbrio entre simplicidade e recursos disponíveis.' },
@@ -61,6 +74,18 @@ const summaryMode = {
     Indicado para quem deseja uma análise mais completa do conteúdo.
     Você pode alterar o modo de visualização a qualquer momento.
   `,
+  fullText: `
+    Modo Resumo: a interface fica super enxuta, exibindo apenas o essencial. Botões perdem os labels, 
+    elementos secundários são ocultados, e você consegue focar no que realmente importa sem distrações. 
+    Ideal para quem prefere uma visão rápida e direta.
+    Modo Padrão: mantém um equilíbrio entre simplicidade e detalhes. 
+    Informações relevantes são destacadas, enquanto dados complementares ficam acessíveis sem poluir a tela. 
+    É perfeito para quem quer produtividade sem perder contexto.
+    Modo Detalhado: exibe todas as informações possíveis, incluindo dados complementares, explicações e estatísticas. 
+    A interface é completa e rica em detalhes, indicada para quem deseja uma análise minuciosa e total controle 
+    sobre o conteúdo.
+    Você pode alternar entre os modos a qualquer momento, adaptando a experiência ao seu fluxo de trabalho.
+  `,
   options: [
     { value: 1, label: 'Modo resumo', field: 'summaryMode' },
     { value: 2, label: 'Modo detalhado', field: 'detailedMode' },
@@ -107,21 +132,24 @@ const inputNumberTextSize = {
 }
 
 const SettingsList = () => {
+  const { preferences } = usePreferences();
+  const dispatch = useDispatch();
   const updateSettings = useUpdateSettings();
 
   const handleValueChange = (data: any) => {
     const payload: any = {
       [data.field]: data.value
     }
-    console.log(payload)
     updateSettings.mutate(payload);
+
+    dispatch(updateSetting(payload));
   }
 
   const items: CollapseProps['items'] = [
     {
       key: '1',
       label: 'Nível de complexidade da interface',
-      children: <Options optionType='radio' data={radioOptions} onChangeValue={handleValueChange} />,
+      children: <Options optionType='radio' data={radioOptions} onChangeValue={handleValueChange} defaultValue={preferences.complexityLevel} />,
     },
     {
       key: '2',
@@ -131,28 +159,36 @@ const SettingsList = () => {
     {
       key: '3',
       label: 'Espaçamento entre os elementos',
-      children: <Options optionType='inputNumber' data={inputNumber} onChangeValue={handleValueChange} />,
+      children: <Options optionType='inputNumber' data={inputNumber} onChangeValue={handleValueChange} defaultValue={preferences.lineHeight} />,
     },
     {
       key: '4',
       label: 'Tamanho da fonte',
-      children: <Options optionType='inputNumber' data={inputNumberTextSize} onChangeValue={handleValueChange} />,
+      children: <Options optionType='inputNumber' data={inputNumberTextSize} onChangeValue={handleValueChange} defaultValue={preferences.fontSize} />,
     },
     {
       key: '5',
       label: 'Alerta cognitivo',
-      children: <Options optionType='switch' data={alertMode} onChangeValue={handleValueChange} />,
+      children: <Options optionType='switch' data={alertMode} onChangeValue={handleValueChange} defaultValue={preferences.cognitiveAlert} />,
     },
     {
       key: '6',
       label: 'Modo foco',
-      children: <Options optionType='switch' data={focusMode} onChangeValue={handleValueChange} />,
+      children: <Options optionType='switch' data={focusMode} onChangeValue={handleValueChange} defaultValue={preferences.focusMode} />,
     },
   ];
 
+  const setStyle = () => {
+    return {
+        fontSize: `${preferences.fontSize}px`,
+        lineHeight: `${preferences.lineHeight}px`,
+        width: '100%',
+    }
+  }
+
   return (
     <div className={styles.list}>
-      <Collapse style={{ width: '100%' }} accordion items={items} />
+      <Collapse style={setStyle()} accordion items={items} />
     </div>
   );
 }

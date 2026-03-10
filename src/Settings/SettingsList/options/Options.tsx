@@ -1,5 +1,6 @@
 import { InputNumber, Radio, Select, Space, Switch, type RadioChangeEvent, type SelectProps } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePreferences } from "../../../hooks/usePreferences";
 
 const options: SelectProps['options'] = [];
 
@@ -9,10 +10,12 @@ interface OptionsProps {
         field: string,
         title: string;
         subtitle: string;
+        fullText?: string;
         options?: Array<{ value: number | boolean | string; label: string; }>;        
         multiple?: boolean;
     },
     onChangeValue?: (value: any) => void;
+    defaultValue?: any;
 }
 
 for (let i = 10; i < 36; i++) {
@@ -22,18 +25,17 @@ for (let i = 10; i < 36; i++) {
   });
 }
 
-const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
-    const [value, setValue] = useState(1);
+const Options = ({ optionType, data, onChangeValue, defaultValue }: OptionsProps) => {
+    const { preferences } = usePreferences();
+    const [value, setValue] = useState(defaultValue);
 
-    const handleChange = (value: string[]) => {
-        console.log(`selected ${value}`);
-    };
+    const handleChange = () => {};
 
-    const onChangeRadio = (value: number, data: any) => {
+    const onChangeRadio = (value: number, field: any) => {
         setValue(value);
         const payload: any = {
             value,
-            field: data
+            field
         }
         onChangeValue?.(payload)
     };
@@ -61,6 +63,13 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
         });
     }
 
+    const setStyle = () => {
+        return {
+            fontSize: `${preferences.fontSize}px`,
+            lineHeight: `${preferences.lineHeight}px`,
+        }
+    }
+
     const handleOptionType = () => {
         switch (optionType) {
             case 'switch': return (
@@ -70,7 +79,7 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
                     <div style={{margin: '4px'}}>
                         <span style={{paddingRight: '16px'}}>{option.label}</span>
                         <Switch 
-                        defaultChecked 
+                        defaultChecked={defaultValue}
                         onChange={(checked) => {
                             handleOnChange(checked, data.field, option)
                         }} />
@@ -80,7 +89,7 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
         );
             case 'select': return (
                 <>
-                    <p>{data.subtitle}</p>
+                    <p style={{lineHeight: `${preferences.lineHeight}px`}}>{data.subtitle}</p>
                     <Select
                         mode="multiple"
                         allowClear
@@ -94,23 +103,24 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
             );
             case 'radio': return (
                 <>
-                <p>{data.subtitle}</p>
-                <Radio.Group value={value} onChange={(e: RadioChangeEvent) => onChangeRadio(e.target.value, data)}>
+                <p>{value != 1 && data.subtitle}</p>
+                <p>{value === 3 && data.fullText}</p>
+                <Radio.Group value={value} onChange={(e: RadioChangeEvent) => onChangeRadio(e.target.value, data.field)}>
                     {data.options?.map((option) => (
-                        <Radio value={option.value}>{option.label}</Radio>
+                        <Radio value={option.value} style={setStyle()}>{option.label}</Radio>
                     ))}
                 </Radio.Group>
                 </>
             );
             case 'inputNumber': return (
                 <>
-                <p>{data.subtitle}</p>
+                <p style={{lineHeight: `${preferences.lineHeight}px`}}>{data.subtitle}</p>
                 <Space wrap>
                     <InputNumber 
                     size="large" 
                     min={14} 
-                    max={20} 
-                    defaultValue={1} 
+                    max={40} 
+                    defaultValue={defaultValue}
                     onChange={(value) => {
                         handleInputNumberChange(data?.field, value)
                     }} />
@@ -120,8 +130,12 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
         }
     };
 
+    useEffect(() => {
+        console.log(preferences)
+    }, [preferences])
+
     return (
-        <div>
+        <div style={setStyle()}>
             {handleOptionType()}
         </div>
     );

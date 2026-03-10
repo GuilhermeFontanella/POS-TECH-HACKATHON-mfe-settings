@@ -1,11 +1,17 @@
 import { createRoot } from 'react-dom/client'
 import Settings from './Settings/Settings.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { store } from './store/index.ts';
+import { Provider as ReduxProvider } from 'react-redux';
+import { SettingsInitializer } from './components/SettingsInitializer.tsx';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={queryClient}>
-      <Settings />
-  </QueryClientProvider>
+  <ReduxProvider store={store}>
+    <QueryClientProvider client={queryClient}>
+        <SettingsInitializer />
+        <Settings />
+    </QueryClientProvider>
+  </ReduxProvider>
 )

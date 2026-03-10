@@ -14,6 +14,7 @@ export const getSettings = async () => {
 }
 
 export const updateSettings = async (data: any) => {
+    console.log(data);
     const docRef = doc(db, 'preferences', 'configs');
     await updateDoc(docRef, data);
 

@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import Settings from "./Settings/Settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SettingsInitializer } from "./components/SettingsInitializer";
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ class SettingsMFE extends HTMLElement {
         }
         this.root.render(
             <QueryClientProvider client={queryClient}>
+                <SettingsInitializer />
                 <Settings />
             </QueryClientProvider>
         );
