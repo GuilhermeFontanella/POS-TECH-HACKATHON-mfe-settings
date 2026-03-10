@@ -2,6 +2,8 @@ import ReactDOM from "react-dom/client";
 import Settings from "./Settings/Settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SettingsInitializer } from "./components/SettingsInitializer";
+import { store } from "./store";
+import { Provider as ReduxProvider } from 'react-redux';
 
 const queryClient = new QueryClient();
 
@@ -14,10 +16,12 @@ class SettingsMFE extends HTMLElement {
             this.root = ReactDOM.createRoot(this);
         }
         this.root.render(
-            <QueryClientProvider client={queryClient}>
-                <SettingsInitializer />
-                <Settings />
-            </QueryClientProvider>
+            <ReduxProvider store={store}>
+                <QueryClientProvider client={queryClient}>
+                    <SettingsInitializer />
+                    <Settings />
+                </QueryClientProvider>
+            </ReduxProvider>
         );
     }
 

@@ -1,5 +1,5 @@
 import { InputNumber, Radio, Select, Space, Switch, type RadioChangeEvent, type SelectProps } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { usePreferences } from "../../../hooks/usePreferences";
 
 const options: SelectProps['options'] = [];
