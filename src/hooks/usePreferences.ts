@@ -11,7 +11,7 @@ export const usePreferences = () => {
   const setPreferences = (value: any) => {
     dispatch(updateSetting(value));
 
-    const event = new CustomEvent('myApp:settingsChanged', {
+    const event = new CustomEvent('settingsChanged', {
       detail: { value }
     });
 
