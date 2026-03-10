@@ -1,9 +1,9 @@
-import { doc, getDoc,  getFirestore, setDoc } from "firebase/firestore";
+import { doc, getDoc,  getFirestore, updateDoc } from "firebase/firestore";
 import { app } from "../firebase";
 const db = getFirestore(app);
 
 export const getSettings = async () => {
-    const docRef = doc(db, 'preferences', 'config');
+    const docRef = doc(db, 'preferences', 'configs');
     const snapshot = await getDoc(docRef);
 
     if (snapshot.exists()) {
@@ -14,8 +14,8 @@ export const getSettings = async () => {
 }
 
 export const updateSettings = async (data: any) => {
-    const docRef = doc(db, 'preferences', 'config');
-    await setDoc(docRef, data, { merge: true });
+    const docRef = doc(db, 'preferences', 'configs');
+    await updateDoc(docRef, data);
 
     return true;
 };

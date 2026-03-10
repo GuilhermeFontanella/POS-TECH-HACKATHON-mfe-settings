@@ -1,8 +1,10 @@
 import { Collapse, type CollapseProps } from 'antd';
 import * as styles from './SettingsList.css';
 import Options from './options/Options';
+import { useUpdateSettings } from '../../hooks/useUpdateSettings';
 
 const radioOptions = {
+  field: 'complexityLevel',
   title: 'Nível de complexidade da interface',
   subtitle: 'Escolha o nível de complexidade da interface',
   options: [
@@ -13,6 +15,7 @@ const radioOptions = {
 }
 
 const focusMode = {
+  field: 'focusMode',
   title: 'Modo foco',
   subtitle: `
     O Modo Foco ajuda você a manter a concentração em uma tarefa por um período determinado de tempo. Quando ativado:
@@ -24,11 +27,12 @@ const focusMode = {
     Você pode ativar ou desativar o Modo Foco sempre que desejar.
   `,
   options: [
-    { value: 1, label: 'Ligado' },
+    { value: true, label: 'Ligado' },
   ]
 }
 
 const alertMode = {
+  field: 'cognitiveAlert',
   title: 'Alerta cognitivo',
   subtitle: `
     O Alerta Cognitivo ajuda você a perceber quando está há muito tempo na mesma tarefa.
@@ -40,11 +44,12 @@ const alertMode = {
     Você pode ativar ou desativar essa opção a qualquer momento.
   `,
   options: [
-    { value: 1, label: 'Ligado' },
+    { value: false, label: 'Ligado' },
   ]
 }
 
 const summaryMode = {
+  field: '',
   title: 'Modo resumo / Modo detalhado',
   subtitle: `
     Você pode escolher como deseja visualizar as informações na tela.
@@ -57,13 +62,15 @@ const summaryMode = {
     Você pode alterar o modo de visualização a qualquer momento.
   `,
   options: [
-    { value: 1, label: 'Modo resumo' },
-    { value: 2, label: 'Modo detalhado' },
+    { value: 1, label: 'Modo resumo', field: 'summaryMode' },
+    { value: 2, label: 'Modo detalhado', field: 'detailedMode' },
+    { value: 3, label: 'Modo padrão', field: 'defaultMode' },
   ],
   multiple: false
 }
 
 const inputNumber = {
+  field: 'lineHeight',
   title: 'Espaçamento entre os elementos',
   subtitle: `
     Você pode ajustar o espaço entre textos, botões e outros elementos da tela.
@@ -76,12 +83,13 @@ const inputNumber = {
     A alteração é aplicada automaticamente na interface.
   `,
   options: [
-    { value: 1, label: 'Modo resumo' },
+    { value: 1, label: 'Espaçamento entre os elementos' },
   ],
   multiple: false
 }
 
 const inputNumberTextSize = {
+  field: 'fontSize',
   title: 'Tamanho da fonte',
   subtitle: `
     Você pode ajustar o tamanho do texto exibido na tela.
@@ -93,50 +101,60 @@ const inputNumberTextSize = {
     As alterações são aplicadas automaticamente e você pode modificar essa opção sempre que precisar.
   `,
   options: [
-    { value: 1, label: 'Modo resumo' },
+    { value: 1, label: 'Tamanho da fonte' },
   ],
   multiple: false
 }
 
-const items: CollapseProps['items'] = [
-  {
-    key: '1',
-    label: 'Nível de complexidade da interface',
-    children: <Options optionType='radio' data={radioOptions} />,
-  },
-  {
-    key: '2',
-    label: 'Modo resumo / Modo detalhado',
-    children: <Options optionType='switch' data={summaryMode} onChangeValue={(value) => console.log(value)} />,
-  },
-  {
-    key: '3',
-    label: 'Espaçamento entre os elementos',
-    children: <Options optionType='inputNumber' data={inputNumber} onChangeValue={(value) => console.log(value)} />,
-  },
-  {
-    key: '4',
-    label: 'Tamanho da fonte',
-    children: <Options optionType='inputNumber' data={inputNumberTextSize} onChangeValue={(value) => console.log(value)} />,
-  },
-  {
-    key: '5',
-    label: 'Alerta cognitivo',
-    children: <Options optionType='switch' data={alertMode} onChangeValue={(value) => console.log(value)} />,
-  },
-  {
-    key: '6',
-    label: 'Modo foco',
-    children: <Options optionType='switch' data={focusMode} onChangeValue={(value) => console.log(value)} />,
-  },
-];
-
 const SettingsList = () => {
-    return (
-      <div className={styles.list}>
-          <Collapse style={{width: '100%'}} accordion items={items} />     
-      </div>
-    );
+  const updateSettings = useUpdateSettings();
+
+  const handleValueChange = (data: any) => {
+    const payload: any = {
+      [data.field]: data.value
+    }
+    console.log(payload)
+    updateSettings.mutate(payload);
+  }
+
+  const items: CollapseProps['items'] = [
+    {
+      key: '1',
+      label: 'Nível de complexidade da interface',
+      children: <Options optionType='radio' data={radioOptions} onChangeValue={handleValueChange} />,
+    },
+    {
+      key: '2',
+      label: 'Modo resumo / Modo detalhado',
+      children: <Options optionType='switch' data={summaryMode} onChangeValue={handleValueChange} />,
+    },
+    {
+      key: '3',
+      label: 'Espaçamento entre os elementos',
+      children: <Options optionType='inputNumber' data={inputNumber} onChangeValue={handleValueChange} />,
+    },
+    {
+      key: '4',
+      label: 'Tamanho da fonte',
+      children: <Options optionType='inputNumber' data={inputNumberTextSize} onChangeValue={handleValueChange} />,
+    },
+    {
+      key: '5',
+      label: 'Alerta cognitivo',
+      children: <Options optionType='switch' data={alertMode} onChangeValue={handleValueChange} />,
+    },
+    {
+      key: '6',
+      label: 'Modo foco',
+      children: <Options optionType='switch' data={focusMode} onChangeValue={handleValueChange} />,
+    },
+  ];
+
+  return (
+    <div className={styles.list}>
+      <Collapse style={{ width: '100%' }} accordion items={items} />
+    </div>
+  );
 }
 
 export default SettingsList;

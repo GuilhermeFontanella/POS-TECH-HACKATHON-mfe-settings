@@ -1,18 +1,18 @@
 import { InputNumber, Radio, Select, Space, Switch, type RadioChangeEvent, type SelectProps } from "antd";
 import { useState } from "react";
-//import { Grid } from 'antd';
 
 const options: SelectProps['options'] = [];
 
 interface OptionsProps {
     optionType: 'switch' | 'select' | 'radio' | 'inputNumber';
     data: {
+        field: string,
         title: string;
         subtitle: string;
-        options?: Array<{ value: number; label: string; }>;        
+        options?: Array<{ value: number | boolean | string; label: string; }>;        
         multiple?: boolean;
     },
-    onChangeValue?: (value: number | { value: number; checked: boolean }) => void;
+    onChangeValue?: (value: any) => void;
 }
 
 for (let i = 10; i < 36; i++) {
@@ -29,20 +29,36 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
         console.log(`selected ${value}`);
     };
 
-    const onChangeRadio = (e: RadioChangeEvent) => {
-        setValue(e.target.value);
+    const onChangeRadio = (value: number, data: any) => {
+        setValue(value);
+        const payload: any = {
+            value,
+            field: data
+        }
+        onChangeValue?.(payload)
     };
 
-    const handleOnChange = (value: number, checked: boolean ) => {
-        const data = {
-            value: value,
-            checked: checked
+    const handleOnChange = (checked: boolean, field: any, option?: any) => {
+        let payload: any;
+        if (!field) {
+            payload = {
+                value: checked,
+                field: option?.field
+            }
+        } else {
+            payload = {
+                value: checked,
+                field: field
+            }
         }
-        onChangeValue?.(data);
+        onChangeValue?.(payload);
     }
 
-    const handleInputNumberChange = (value: number | null) => {
-        if (value !== null) onChangeValue?.(value);
+    const handleInputNumberChange = (field: string, value: number | null) => {
+        if (value !== null) onChangeValue?.({
+            field: field,
+            value
+        });
     }
 
     const handleOptionType = () => {
@@ -53,7 +69,11 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
                     {data.options?.map((option) => (
                     <div style={{margin: '4px'}}>
                         <span style={{paddingRight: '16px'}}>{option.label}</span>
-                        <Switch defaultChecked onChange={(checked) => handleOnChange(option.value, checked)} />
+                        <Switch 
+                        defaultChecked 
+                        onChange={(checked) => {
+                            handleOnChange(checked, data.field, option)
+                        }} />
                     </div>
                     ))}   
                 </div>
@@ -75,7 +95,7 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
             case 'radio': return (
                 <>
                 <p>{data.subtitle}</p>
-                <Radio.Group value={value} onChange={onChangeRadio}>
+                <Radio.Group value={value} onChange={(e: RadioChangeEvent) => onChangeRadio(e.target.value, data)}>
                     {data.options?.map((option) => (
                         <Radio value={option.value}>{option.label}</Radio>
                     ))}
@@ -86,7 +106,14 @@ const Options = ({ optionType, data, onChangeValue }: OptionsProps) => {
                 <>
                 <p>{data.subtitle}</p>
                 <Space wrap>
-                    <InputNumber size="large" min={1} max={5} defaultValue={1} onChange={handleInputNumberChange} />
+                    <InputNumber 
+                    size="large" 
+                    min={14} 
+                    max={20} 
+                    defaultValue={1} 
+                    onChange={(value) => {
+                        handleInputNumberChange(data?.field, value)
+                    }} />
                 </Space>
                 </>
             )

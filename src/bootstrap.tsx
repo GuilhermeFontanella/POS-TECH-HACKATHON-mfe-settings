@@ -1,26 +1,24 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
-//import App from "./App";
 import Settings from "./Settings/Settings";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 class SettingsMFE extends HTMLElement {
     private root: ReactDOM.Root | null = null;
 
-    // O nome correto é connectedCallback (b minúsculo)
     connectedCallback() {
-        //const shadow = this.attachShadow({ mode: 'open' });
         
         if (!this.root) {
             this.root = ReactDOM.createRoot(this);
         }
         this.root.render(
-            <React.StrictMode>
+            <QueryClientProvider client={queryClient}>
                 <Settings />
-            </React.StrictMode>
+            </QueryClientProvider>
         );
     }
 
-    // Limpa o React quando o componente sai do DOM (Navegação do Angular)
     disconnectedCallback() {
         if (this.root) {
             this.root.unmount();
@@ -29,7 +27,6 @@ class SettingsMFE extends HTMLElement {
     }
 }
 
-// Verifica se já não foi definido para evitar erro em Hot Reload
 if (!customElements.get('mfe-settings')) {
     customElements.define('mfe-settings', SettingsMFE);
 }
