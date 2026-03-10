@@ -38,7 +38,7 @@ const focusMode = {
     Você pode ativar ou desativar o Modo Foco sempre que desejar.
   `,
   options: [
-    { value: true, label: 'Ligado' },
+    { value: true, label: '' },
   ]
 }
 
@@ -55,7 +55,7 @@ const alertMode = {
     Você pode ativar ou desativar essa opção a qualquer momento.
   `,
   options: [
-    { value: false, label: 'Ligado' },
+    { value: false, label: '' },
   ]
 }
 
