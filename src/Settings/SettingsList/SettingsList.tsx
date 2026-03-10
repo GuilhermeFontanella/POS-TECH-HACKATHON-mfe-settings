@@ -2,8 +2,6 @@ import { Collapse, type CollapseProps } from 'antd';
 import * as styles from './SettingsList.css';
 import Options from './options/Options';
 import { useUpdateSettings } from '../../hooks/useUpdateSettings';
-import { useDispatch } from 'react-redux';
-import { updateSetting } from '../../store/settingsSlice';
 import { usePreferences } from '../../hooks/usePreferences';
 
 const radioOptions = {
@@ -132,8 +130,7 @@ const inputNumberTextSize = {
 }
 
 const SettingsList = () => {
-  const { preferences } = usePreferences();
-  const dispatch = useDispatch();
+  const { preferences, setPreferences } = usePreferences();
   const updateSettings = useUpdateSettings();
 
   const handleValueChange = (data: any) => {
@@ -142,7 +139,7 @@ const SettingsList = () => {
     }
     updateSettings.mutate(payload);
 
-    dispatch(updateSetting(payload));
+    setPreferences(payload);
   }
 
   const items: CollapseProps['items'] = [
